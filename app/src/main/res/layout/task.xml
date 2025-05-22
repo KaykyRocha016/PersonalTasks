@@ -18,7 +18,7 @@
         android:paddingTop="4dp"
         />
     <TextView
-        android:id="@+id/tvDeadline_tv"
+        android:id="@+id/deadline_tv"
         android:textSize="12sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
