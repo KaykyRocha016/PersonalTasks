@@ -1,12 +1,16 @@
 package com.example.personaltasks
 
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.personaltasks.adapter.TaskAdapter
 import com.example.personaltasks.databinding.PersonalTasksBinding
 import com.example.personaltasks.model.Task
+import com.example.personaltasks.ui.TaskFormActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,5 +35,24 @@ class MainActivity : AppCompatActivity() {
             adapter = TaskAdapter(fakeTasks)
         }
     }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean{
+        menuInflater.inflate(R.menu.menu_main,menu)
+        return true
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_new_task -> {
+                val intent = Intent(this, TaskFormActivity::class.java)
+                startActivity(intent)
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+
+    }
+
 }
 
