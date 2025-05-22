@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.PersonalTasks" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <!-- Customize as needed -->
+    </style>
 
-    <style name="Theme.PersonalTasks" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

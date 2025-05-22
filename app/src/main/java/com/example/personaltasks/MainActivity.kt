@@ -1,47 +1,35 @@
 package com.example.personaltasks
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.personaltasks.ui.theme.PersonalTasksTheme
 
-class MainActivity : ComponentActivity() {
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.personaltasks.adapter.TaskAdapter
+import com.example.personaltasks.databinding.PersonalTasksBinding
+import com.example.personaltasks.model.Task
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var personalTasksBinding: PersonalTasksBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            PersonalTasksTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+
+
+        personalTasksBinding = PersonalTasksBinding.inflate(layoutInflater)
+        setContentView(personalTasksBinding.root)
+
+
+        val fakeTasks = listOf(
+            Task(1, "Estudar Kotlin", "Revisar fundamentos básicos", "21/05/2025"),
+            Task(2, "Criar layout", "Implementar RecyclerView", "22/05/2025"),
+            Task(3, "Finalizar app", "Subir no GitHub com vídeo", "25/05/2025")
+        )
+
+        personalTasksBinding.tasksRv.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = TaskAdapter(fakeTasks)
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PersonalTasksTheme {
-        Greeting("Android")
-    }
-}
