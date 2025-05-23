@@ -30,6 +30,7 @@
         private var selectedTask : Task? = null
 
         override fun onCreate(savedInstanceState: Bundle?) {
+
             super.onCreate(savedInstanceState)
             personalTasksBinding = PersonalTasksBinding.inflate(layoutInflater)
             setContentView(personalTasksBinding.root)
@@ -73,6 +74,7 @@
                     }
                 }
             }
+            registerForContextMenu(personalTasksBinding.tasksRv)
         }
 
         override fun onCreateOptionsMenu(menu: Menu?): Boolean {

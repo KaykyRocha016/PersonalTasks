@@ -55,22 +55,24 @@ class TaskFormActivity :AppCompatActivity() {
 
 
         }
-        activityTaskFormBinding.btnSave.setOnClickListener{
-            val title= activityTaskFormBinding.titleEt.text.toString()
+        activityTaskFormBinding.btnSave.setOnClickListener {
+            val title = activityTaskFormBinding.titleEt.text.toString()
             val description = activityTaskFormBinding.descriptionEt.text.toString()
             val deadline = activityTaskFormBinding.deadlineTv.text.toString()
-            if (title.isBlank() || description.isBlank()||deadline.isBlank()) {
+
+            if (title.isBlank() || description.isBlank() || deadline.isBlank()) {
                 Toast.makeText(this, "Todos os campos são obrigatórios", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-
             }
-            val task = Task(UUID.randomUUID(),title,description,deadline)
-            val resultIntent = Intent().apply { putExtra("task",task) }
-            setResult(RESULT_OK,resultIntent)
-            finish()
-        }
-        activityTaskFormBinding.btnCancel.setOnClickListener{
-            setResult(RESULT_CANCELED)
+
+            val task = taskToEdit?.copy(
+                title = title,
+                description = description,
+                deadline = deadline
+            ) ?: Task(UUID.randomUUID(), title, description, deadline)
+
+            val resultIntent = Intent().apply { putExtra("task", task) }
+            setResult(RESULT_OK, resultIntent)
             finish()
         }
 
