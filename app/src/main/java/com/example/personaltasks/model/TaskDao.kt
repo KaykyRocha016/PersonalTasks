@@ -8,10 +8,10 @@ import java.util.UUID
 
 interface TaskDao {
     @Query("SELECT * FROM TASK")
-    fun retriveTasks(): MutableList<Task>
+    fun getTasks(): MutableList<Task>
 
     @Query("SELECT * FROM TASK WHERE id  = :id")
-    fun retriveTaskById(id: UUID): Task?
+    fun getTaskByID(id: UUID): Task?
 
     @Insert
     fun insertTask(task: Task)
@@ -20,7 +20,7 @@ interface TaskDao {
     fun updateTask(task:Task)
 
     @Delete
-    fun deleteTask(id: UUID)
+    fun deleteTask(task: Task)
 
 
 }
