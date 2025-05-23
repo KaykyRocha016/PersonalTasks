@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
     private var selectedTask: Task? = null
     private lateinit var controller: PersonalTasksController
 
+    //método chamado na criação da activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         personalTasksBinding = PersonalTasksBinding.inflate(layoutInflater)
@@ -52,15 +53,16 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = taskAdapter
         }
+        //registra o menu de contexto na recycler view
         registerForContextMenu(personalTasksBinding.tasksRv)
-
+        //cria uma co-rotina para carregar as tasks do banco na lista de tasks
         CoroutineScope(Dispatchers.Main).launch {
             val savedTasks = controller.getAll()
             tasks.clear()
             tasks.addAll(savedTasks)
             taskAdapter.notifyDataSetChanged()
         }
-
+        //edição ou adição de task
         addEditTaskLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -89,12 +91,12 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
             }
         }
     }
-
+    //define o comportamento da criação do menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
-
+    //define o comportamento do botão de criar uma task abrindo a tela do formulário de tasks
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_new_task -> {
@@ -105,22 +107,24 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
+//define o comportamento do clique longo em uma task: abrir o menu de contexto
     override fun onTaskLongClick(task: Task, view: View) {
         selectedTask = task
         view.showContextMenu()
     }
-
+//define o comportamento da abertura do menu de contexto
     override fun onCreateContextMenu(
         menu: ContextMenu?,
         v: View?,
         menuInfo: ContextMenu.ContextMenuInfo?
     ) {
+        //infla o layout do menu de contexto
         super.onCreateContextMenu(menu, v, menuInfo)
         menuInflater.inflate(R.menu.task_menu_context, menu)
     }
-
+//método de deleção de task
     private fun deleteTask(task: Task) {
+        //cria co-rotina para executar em outra thread
         CoroutineScope(Dispatchers.Main).launch {
             controller.deleteTask(task)
             val index = tasks.indexOfFirst { it.id == task.id }
@@ -130,7 +134,7 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
             }
         }
     }
-
+    //define o comportamento ao clicar em uma opção do menu de contexto
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.context_edit -> {

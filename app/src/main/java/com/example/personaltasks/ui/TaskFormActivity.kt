@@ -10,23 +10,26 @@ import android.widget.Toast
 import com.example.personaltasks.model.Task
 import com.example.personaltasks.model.TaskFormMode
 import java.util.*
-
+//Classe que representa a activity do formulário de criação/edição/vizualição de tasks
 class TaskFormActivity :AppCompatActivity() {
     private lateinit var activityTaskFormBinding: ActivityTaskFormBinding;
     private var selectedDate : String = "";
     private var mode : TaskFormMode = TaskFormMode.NEW;
     private var taskToEdit :Task?=null
-
+    //método chamado na criação da activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //infla o layout para vincular a classe
         activityTaskFormBinding = ActivityTaskFormBinding.inflate(layoutInflater)
         setContentView(activityTaskFormBinding.root)
 
+        //define o que acontece ao clicar no text view do deadline
         activityTaskFormBinding.deadlineTv.setOnClickListener{
             openDatePickerDialog()
 
 
         }
+        //obtém o modo de abertura da tela
         mode = if(  Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getSerializableExtra("mode", TaskFormMode::class.java) ?: TaskFormMode.NEW
         } else {
@@ -47,6 +50,7 @@ class TaskFormActivity :AppCompatActivity() {
             activityTaskFormBinding.deadlineTv.setText(it.deadline )
         }
 
+        //desabilita todos os campos e retira o botão de salvar se for o modo de vizualição
         if (mode == TaskFormMode.VIEW) {
             activityTaskFormBinding.titleEt.isEnabled = false
             activityTaskFormBinding.deadlineTv.isEnabled=false
@@ -55,6 +59,7 @@ class TaskFormActivity :AppCompatActivity() {
 
 
         }
+        //define o comportamento do botão save
         activityTaskFormBinding.btnSave.setOnClickListener {
             val title = activityTaskFormBinding.titleEt.text.toString()
             val description = activityTaskFormBinding.descriptionEt.text.toString()
@@ -78,6 +83,7 @@ class TaskFormActivity :AppCompatActivity() {
 
 
     }
+    //método que abre o date picker
     private fun openDatePickerDialog(){
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)

@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 import org.jetbrains.annotations.NotNull
 import java.util.UUID
-
+//modelo de Task
 @Parcelize
 @Entity(tableName = "task")
 data class Task (@PrimaryKey val id: UUID, val title: String, val description: String, val deadline : String) :

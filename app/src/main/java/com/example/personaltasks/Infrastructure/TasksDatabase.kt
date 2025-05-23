@@ -7,6 +7,7 @@ import com.example.personaltasks.Utils.UUIDConverter
 import com.example.personaltasks.model.Task
 import com.example.personaltasks.model.TaskDao
 
+//classe que representa o database do room
 @Database(entities = [Task::class], version = 1)
 @TypeConverters(UUIDConverter::class)
 abstract class TasksDatabase:RoomDatabase() {
