@@ -15,6 +15,7 @@
     import com.example.personaltasks.databinding.PersonalTasksBinding
     import com.example.personaltasks.model.Task
     import com.example.personaltasks.ui.TaskFormActivity
+    import java.util.UUID
 
     class MainActivity : AppCompatActivity() {
 
@@ -31,9 +32,9 @@
 
             tasks.addAll(
                 listOf(
-                    Task(1, "Estudar Kotlin", "Revisar fundamentos básicos", "21/05/2025"),
-                    Task(2, "Criar layout", "Implementar RecyclerView", "22/05/2025"),
-                    Task(3, "Finalizar app", "Subir no GitHub com vídeo", "25/05/2025")
+                    Task(UUID.randomUUID(), "Estudar Kotlin", "Revisar fundamentos básicos", "21/05/2025"),
+                    Task(UUID.randomUUID(), "Criar layout", "Implementar RecyclerView", "22/05/2025"),
+                    Task(UUID.randomUUID(), "Finalizar app", "Subir no GitHub com vídeo", "25/05/2025")
                 )
             )
 
