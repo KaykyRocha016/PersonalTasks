@@ -1,11 +1,12 @@
 package com.example.personaltasks.Utils
 
+import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import java.util.UUID
 
 class UUIDConverter {
-    @TypeConverters
+    @TypeConverter
     fun fromUUID(uuid: UUID?):String? = uuid?.toString()
-    @TypeConverters
+    @TypeConverter
     fun toUUID(string:String?):UUID? = UUID.fromString(string)
 }

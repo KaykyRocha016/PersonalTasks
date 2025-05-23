@@ -9,5 +9,5 @@ import com.example.personaltasks.model.TaskDao
 @Database(entities = [Task::class], version = 1)
 @TypeConverters(TypeConverters::class)
 abstract class TasksDatabase:RoomDatabase() {
-    abstract fun TaskDao(): TaskDao
+    abstract fun taskDao(): TaskDao
 }
