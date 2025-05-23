@@ -5,24 +5,29 @@
     import android.os.Build
     import androidx.appcompat.app.AppCompatActivity
     import android.os.Bundle
+    import android.view.ContextMenu
     import android.view.Menu
     import android.view.MenuItem
-    import androidx.activity.result.ActivityResultCallback
+    import android.view.View
     import androidx.activity.result.ActivityResultLauncher
     import androidx.activity.result.contract.ActivityResultContracts
+    import androidx.appcompat.app.AlertDialog
     import androidx.recyclerview.widget.LinearLayoutManager
     import com.example.personaltasks.adapter.TaskAdapter
     import com.example.personaltasks.databinding.PersonalTasksBinding
+    import com.example.personaltasks.model.IOnTaskInteractionListener
     import com.example.personaltasks.model.Task
+    import com.example.personaltasks.model.TaskFormMode
     import com.example.personaltasks.ui.TaskFormActivity
     import java.util.UUID
 
-    class MainActivity : AppCompatActivity() {
+    class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
 
         private lateinit var taskAdapter: TaskAdapter
         private val tasks = mutableListOf<Task>()
         private lateinit var addEditTaskLauncher: ActivityResultLauncher<Intent>
-        lateinit var personalTasksBinding: PersonalTasksBinding
+        private lateinit var personalTasksBinding: PersonalTasksBinding
+        private var selectedTask : Task? = null
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -39,7 +44,7 @@
             )
 
 
-            taskAdapter = TaskAdapter(tasks)
+            taskAdapter = TaskAdapter(tasks,this)
             personalTasksBinding.tasksRv.apply {
                 layoutManager = LinearLayoutManager(this@MainActivity)
                 adapter = taskAdapter
@@ -85,4 +90,58 @@
                 else -> super.onOptionsItemSelected(item)
             }
         }
+
+        override fun onTaskLongClick(task: Task, view: View) {
+            selectedTask=task
+            view.showContextMenu()
+        }
+
+        override fun onCreateContextMenu(
+            menu: ContextMenu?,
+            v: View?,
+            menuInfo: ContextMenu.ContextMenuInfo?
+        ) {
+            super.onCreateContextMenu(menu, v, menuInfo)
+            menuInflater.inflate(R.menu.task_menu_context,menu);
+        }
+        override fun onContextItemSelected(item: MenuItem): Boolean {
+            return when(item.itemId) {
+                R.id.context_edit -> {
+                    selectedTask?.let {
+                        val intent = Intent(this, TaskFormActivity::class.java).apply {
+                            putExtra("mode", TaskFormMode.EDIT)
+                            putExtra("task", it)
+                        }
+                        addEditTaskLauncher.launch(intent)
+                    }
+                    true
+                }
+                R.id.context_delete -> {
+                    selectedTask?.let {
+                        AlertDialog.Builder(this)
+                            .setTitle("Excluir tarefa")
+                            .setMessage("Deseja realmente excluir a tarefa \"${it.title}\"?")
+                            .setPositiveButton("Sim") { _, _ ->
+                                tasks.remove(it)
+                                taskAdapter.notifyDataSetChanged()
+                            }
+                            .setNegativeButton("Não", null)
+                            .show()
+                    }
+                    true
+                }
+                R.id.context_view -> {
+                    selectedTask?.let {
+                        val intent = Intent(this, TaskFormActivity::class.java).apply {
+                            putExtra("mode", TaskFormMode.VIEW)
+                            putExtra("task", it)
+                        }
+                        startActivity(intent)
+                    }
+                    true
+                }
+                else -> super.onContextItemSelected(item)
+            }
+        }
+
     }

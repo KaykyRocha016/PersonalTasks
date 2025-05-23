@@ -4,24 +4,33 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.personaltasks.databinding.TaskBinding
+import com.example.personaltasks.model.IOnTaskInteractionListener
 import com.example.personaltasks.model.Task
 
-class TaskAdapter(private val taskList: List<Task>) :
-    RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
-    inner class TaskViewHolder(private val binding: TaskBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+class TaskAdapter(
+    private val taskList: MutableList<Task>,
+    private val listener: IOnTaskInteractionListener
+) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
+
+    inner class TaskViewHolder(private val taskBinding: TaskBinding) :
+        RecyclerView.ViewHolder(taskBinding.root) {
 
         fun bind(task: Task) {
-            binding.titleTv.text = task.title
-            binding.descriptionTv.text = task.description
-            binding.deadlineTv.text = "Data limite: ${task.deadline}"
+            taskBinding.titleTv.text = task.title
+            taskBinding.descriptionTv.text = task.description
+            taskBinding.deadlineTv.text = "Data limite: ${task.deadline}"
+
+            taskBinding.root.setOnLongClickListener {
+                listener.onTaskLongClick(task, it)
+                true
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-        val binding = TaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return TaskViewHolder(binding)
+        val taskBinding = TaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return TaskViewHolder(taskBinding)
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
