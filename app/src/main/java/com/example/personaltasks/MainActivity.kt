@@ -74,12 +74,13 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
                 }
                 task?.let {
                     CoroutineScope(Dispatchers.Main).launch {
-                        controller.insertTask(it)
                         val index = tasks.indexOfFirst { t -> t.id == it.id }
                         if (index >= 0) {
+                            controller.updateTask(it)
                             tasks[index] = it
                             taskAdapter.notifyItemChanged(index)
                         } else {
+                            controller.insertTask(it)
                             tasks.add(it)
                             taskAdapter.notifyItemInserted(tasks.size - 1)
                         }
