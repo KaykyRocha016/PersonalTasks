@@ -80,6 +80,9 @@ class TaskFormActivity :AppCompatActivity() {
             setResult(RESULT_OK, resultIntent)
             finish()
         }
+        activityTaskFormBinding.btnCancel.setOnClickListener{
+            finish()
+        }
 
 
     }
