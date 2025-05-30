@@ -17,6 +17,7 @@ import com.example.personaltasks.Infrastructure.TasksDatabase
 import com.example.personaltasks.adapter.TaskAdapter
 import com.example.personaltasks.controller.PersonalTasksController
 import com.example.personaltasks.databinding.PersonalTasksBinding
+import com.example.personaltasks.databinding.TaskBinding
 import com.example.personaltasks.model.IOnTaskInteractionListener
 import com.example.personaltasks.model.Task
 import com.example.personaltasks.model.TaskFormMode
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
     private lateinit var personalTasksBinding: PersonalTasksBinding
     private var selectedTask: Task? = null
     private lateinit var controller: PersonalTasksController
+
 
     //método chamado na criação da activity
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,7 +114,21 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
         selectedTask = task
         view.showContextMenu()
     }
-//define o comportamento da abertura do menu de contexto
+
+    override fun onDoneClickListener(task: Task, view: View) {
+        selectedTask = task
+        if(task.checked ==true){
+            task.checked=false
+        }
+        else{
+            task.checked=true
+        }
+       CoroutineScope(Dispatchers.Main).launch {
+           controller.updateTask(task)
+       }
+    }
+
+    //define o comportamento da abertura do menu de contexto
     override fun onCreateContextMenu(
         menu: ContextMenu?,
         v: View?,

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.view.View
 import android.widget.Toast
+import com.example.personaltasks.databinding.TaskBinding
 import com.example.personaltasks.model.Task
 import com.example.personaltasks.model.TaskFormMode
 import java.util.*
@@ -16,6 +17,7 @@ class TaskFormActivity :AppCompatActivity() {
     private var selectedDate : String = "";
     private var mode : TaskFormMode = TaskFormMode.NEW;
     private var taskToEdit :Task?=null
+
     //método chamado na criação da activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +50,7 @@ class TaskFormActivity :AppCompatActivity() {
             activityTaskFormBinding.titleEt.setText(it.title)
             activityTaskFormBinding.descriptionEt.setText(it.description)
             activityTaskFormBinding.deadlineTv.setText(it.deadline )
+            activityTaskFormBinding.checkedCb.isChecked = it.checked
         }
 
         //desabilita todos os campos e retira o botão de salvar se for o modo de vizualição
@@ -55,6 +58,7 @@ class TaskFormActivity :AppCompatActivity() {
             activityTaskFormBinding.titleEt.isEnabled = false
             activityTaskFormBinding.deadlineTv.isEnabled=false
             activityTaskFormBinding.descriptionEt.isEnabled=false
+            activityTaskFormBinding.checkedCb.isEnabled=false
             activityTaskFormBinding.btnSave.visibility= View.GONE
 
 
@@ -64,6 +68,7 @@ class TaskFormActivity :AppCompatActivity() {
             val title = activityTaskFormBinding.titleEt.text.toString()
             val description = activityTaskFormBinding.descriptionEt.text.toString()
             val deadline = activityTaskFormBinding.deadlineTv.text.toString()
+            val checked = activityTaskFormBinding.checkedCb.isChecked
 
             if (title.isBlank() || description.isBlank() || deadline.isBlank()) {
                 Toast.makeText(this, "Todos os campos são obrigatórios", Toast.LENGTH_SHORT).show()
@@ -73,8 +78,9 @@ class TaskFormActivity :AppCompatActivity() {
             val task = taskToEdit?.copy(
                 title = title,
                 description = description,
-                deadline = deadline
-            ) ?: Task(UUID.randomUUID(), title, description, deadline)
+                deadline = deadline,
+                checked = checked
+            ) ?: Task(UUID.randomUUID(), title, description, deadline,checked)
 
             val resultIntent = Intent().apply { putExtra("task", task) }
             setResult(RESULT_OK, resultIntent)

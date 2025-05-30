@@ -9,7 +9,7 @@ import java.util.UUID
 //modelo de Task
 @Parcelize
 @Entity(tableName = "task")
-data class Task (@PrimaryKey val id: UUID, val title: String, val description: String, val deadline : String) :
+data class Task (@PrimaryKey val id: UUID, val title: String, val description: String, val deadline : String, var checked: Boolean) :
     Parcelable {
 
 
