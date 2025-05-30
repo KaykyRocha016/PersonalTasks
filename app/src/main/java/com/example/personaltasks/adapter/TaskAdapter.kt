@@ -12,7 +12,7 @@ class TaskAdapter(
     private val taskList: MutableList<Task>,
     private val listener: IOnTaskInteractionListener
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
-
+//commit de teste da sala
     // Vincula os dados da task aos elementos visuais do layout
     inner class TaskViewHolder(private val taskBinding: TaskBinding) :
         RecyclerView.ViewHolder(taskBinding.root) {
