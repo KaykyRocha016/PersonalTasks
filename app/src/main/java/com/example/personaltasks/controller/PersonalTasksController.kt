@@ -1,38 +1,38 @@
 package com.example.personaltasks.controller
 
+import androidx.lifecycle.LiveData
+import com.example.personaltasks.Infrastructure.ITaskRepository
 import com.example.personaltasks.model.Task
-import com.example.personaltasks.model.TaskDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
-class PersonalTasksController(private val taskDao: TaskDao) {
+class PersonalTasksController(private val firebaseRepository: ITaskRepository) {
 
     //insere uma task no banco
     suspend fun insertTask(task : Task) = withContext(Dispatchers.IO){
-        taskDao.insertTask(task)
+        firebaseRepository.createTask(task)
 
     }
-    //retorna uma lista com todas as tasks do banco
-    suspend fun getAll() : List<Task> = withContext(Dispatchers.IO){
-
-        return@withContext taskDao.getTasks()
+    fun getAll(deleted: Boolean = false): LiveData<List<Task>> {
+        // retorna imediatamente o LiveData que já vai receber updates do Firestore
+        return firebaseRepository.getTasks(deleted)
     }
 
     //busca uma task no banco pelo id
-    suspend fun getTask(id:UUID) : Task? = withContext(Dispatchers.IO){
-        return@withContext taskDao.getTaskByID(id)
+    suspend fun getTask(id: String) : Task? = withContext(Dispatchers.IO){
+        return@withContext firebaseRepository.getTask(id)
     }
 
     //apaga uma task do banco
     suspend fun deleteTask(task: Task) = withContext(Dispatchers.IO){
-        taskDao.deleteTask(task)
+        firebaseRepository.deleteTask(task)
 
 
     }
 
     //atualiza uma task
     suspend fun updateTask(task: Task) = withContext(Dispatchers.IO){
-        taskDao.updateTask(task)
+        firebaseRepository.updateTask(task)
     }
 }
