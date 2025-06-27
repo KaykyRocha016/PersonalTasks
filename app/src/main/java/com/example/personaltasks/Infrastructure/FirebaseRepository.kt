@@ -11,7 +11,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
-class FirestoreTaskRepository : ITaskRepository {
+class FirebaseRepository : ITaskRepository {
 
     private val db = FirebaseFirestore.getInstance()
     private val uid get() = FirebaseAuth.getInstance().currentUser!!.uid
@@ -25,7 +25,7 @@ class FirestoreTaskRepository : ITaskRepository {
         val live = MutableLiveData<List<Task>>()
         tasksColl()
             .whereEqualTo("deleted", deleted)
-            .orderBy("dueDate", Query.Direction.ASCENDING)
+            .orderBy("deadline", Query.Direction.ASCENDING)
             .addSnapshotListener { snap, e ->
                 if (e != null) return@addSnapshotListener
                 val list = snap
