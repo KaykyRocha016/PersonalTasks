@@ -21,6 +21,7 @@ import com.example.personaltasks.databinding.PersonalTasksBinding
 import com.example.personaltasks.model.IOnTaskInteractionListener
 import com.example.personaltasks.model.Task
 import com.example.personaltasks.model.TaskFormMode
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,6 +35,9 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
     private var selectedTask: Task? = null
     private lateinit var controller: PersonalTasksController
     private val firebaseRepository = FirebaseRepository();
+    private val auth by lazy {
+        FirebaseAuth.getInstance()
+    }
 
 
     // Método chamado na criação da Activity
@@ -103,9 +107,22 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
                 addEditTaskLauncher.launch(intent)
                 true
             }
+            R.id.menu_view_deleted_tasks -> {
+                // Ao clicar em "Tarefas Excluídas", abre a tela de tarefas excluídas
+                val intent = Intent(this, DeletedTasksActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.signout->{
+                auth.signOut()
+                startActivity(Intent(this,LoginActivity::class.java))
+                finish()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 
     // Define o comportamento do clique longo em uma task (menu de contexto)
     override fun onTaskLongClick(task: Task, view: View) {
@@ -176,5 +193,15 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
             }
             else -> super.onContextItemSelected(item)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(auth.currentUser == null) finish()
+        controller.getAll().observe(this, Observer { taskList ->
+            tasks.clear()
+            tasks.addAll(taskList)
+            taskAdapter.notifyDataSetChanged()
+        })
     }
 }

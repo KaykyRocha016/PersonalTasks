@@ -36,6 +36,10 @@
                 android:exported="true"
                 android:label="RegisterActivity"
             />
+        <activity android:name=".ui.DeletedTasksActivity"
+            android:exported="true"
+            android:label="DeletedTasksActivity"
+            />
     </application>
 
 </manifest>

@@ -35,4 +35,8 @@ class PersonalTasksController(private val firebaseRepository: ITaskRepository) {
     suspend fun updateTask(task: Task) = withContext(Dispatchers.IO){
         firebaseRepository.updateTask(task)
     }
+    suspend fun reactivateTask(task: Task) {
+        // Atualiza a tarefa no Firebase, definindo 'deleted' como false e 'deletedAt' como null
+        firebaseRepository.reactivateTask(task)
+    }
 }

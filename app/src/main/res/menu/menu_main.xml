@@ -6,4 +6,18 @@
         android:title="@string/nova_tarefa"
         android:icon="@android:drawable/ic_input_add"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_view_deleted_tasks"
+        android:title="Tarefas Excluídas"
+        android:icon="@android:drawable/ic_menu_delete"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/signout"
+        android:title="signout"
+        android:icon="@android:drawable/presence_offline"
+        app:showAsAction="ifRoom"
+        />
+
+
+
 </menu>
