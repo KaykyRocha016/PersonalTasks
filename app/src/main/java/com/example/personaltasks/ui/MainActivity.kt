@@ -114,11 +114,11 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
 
     override fun onDoneClickListener(task: Task, view: View) {
         selectedTask = task
-        if(task.checked ==true){
-            task.checked=false
+        if(task.completed ==true){
+            task.completed=false
         }
         else{
-            task.checked=true
+            task.completed=true
         }
        CoroutineScope(Dispatchers.Main).launch {
            controller.updateTask(task)

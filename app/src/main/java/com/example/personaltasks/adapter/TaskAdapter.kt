@@ -21,7 +21,7 @@ class TaskAdapter(
             taskBinding.titleTv.text = task.title
             taskBinding.descriptionTv.text = task.description
             taskBinding.deadlineTv.text = "Data limite: ${task.deadline}"
-            taskBinding.doneCk.isChecked = task.checked
+            taskBinding.doneCk.isChecked = task.completed
             taskBinding.doneCk.setOnClickListener {
                 listener.onDoneClickListener(task,it)
             }

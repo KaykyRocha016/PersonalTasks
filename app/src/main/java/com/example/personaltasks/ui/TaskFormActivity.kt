@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Build
 import android.view.View
 import android.widget.Toast
-import com.example.personaltasks.databinding.TaskBinding
 import com.example.personaltasks.model.Task
 import com.example.personaltasks.model.TaskFormMode
 import java.util.*
@@ -50,7 +49,7 @@ class TaskFormActivity :AppCompatActivity() {
             activityTaskFormBinding.titleEt.setText(it.title)
             activityTaskFormBinding.descriptionEt.setText(it.description)
             activityTaskFormBinding.deadlineTv.setText(it.deadline )
-            activityTaskFormBinding.checkedCb.isChecked = it.checked
+            activityTaskFormBinding.checkedCb.isChecked = it.completed
         }
 
         //desabilita todos os campos e retira o botão de salvar se for o modo de vizualição
@@ -79,8 +78,8 @@ class TaskFormActivity :AppCompatActivity() {
                 title = title,
                 description = description,
                 deadline = deadline,
-                checked = checked
-            ) ?: Task(UUID.randomUUID(), title, description, deadline,checked)
+                completed = checked
+            ) ?: Task(UUID.randomUUID().toString(), title, description, deadline,checked)
 
             val resultIntent = Intent().apply { putExtra("task", task) }
             setResult(RESULT_OK, resultIntent)
