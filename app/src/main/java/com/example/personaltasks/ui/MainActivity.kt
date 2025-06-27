@@ -11,12 +11,12 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.room.Room
-import com.example.personaltasks.Infrastructure.TasksDatabase
 import com.example.personaltasks.R
 import com.example.personaltasks.adapter.TaskAdapter
 import com.example.personaltasks.controller.PersonalTasksController
+import com.example.personaltasks.data.FirebaseRepository
 import com.example.personaltasks.databinding.PersonalTasksBinding
 import com.example.personaltasks.model.IOnTaskInteractionListener
 import com.example.personaltasks.model.Task
@@ -33,38 +33,36 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
     private lateinit var personalTasksBinding: PersonalTasksBinding
     private var selectedTask: Task? = null
     private lateinit var controller: PersonalTasksController
+    private val firebaseRepository = FirebaseRepository();
 
 
-    //método chamado na criação da activity
+    // Método chamado na criação da Activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         personalTasksBinding = PersonalTasksBinding.inflate(layoutInflater)
         setContentView(personalTasksBinding.root)
-        val db = Room.databaseBuilder(
-            applicationContext,
-            TasksDatabase::class.java,
-            "personal_tasks_db"
-        ).build()
-        controller = PersonalTasksController(db.taskDao())
+
+        // Inicia o controller com o repositório do Firebase
+        controller = PersonalTasksController(firebaseRepository = firebaseRepository)
 
         taskAdapter = TaskAdapter(tasks, this)
         personalTasksBinding.tasksRv.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = taskAdapter
         }
-        //registra o menu de contexto na recycler view
+
+        // Registra o menu de contexto na RecyclerView
         registerForContextMenu(personalTasksBinding.tasksRv)
-        //cria uma co-rotina para carregar as tasks do banco na lista de tasks
-        CoroutineScope(Dispatchers.Main).launch {
-            val savedTasks = controller.getAll()
+
+        // Observar as tarefas no Firebase
+        controller.getAll().observe(this, Observer { taskList ->
             tasks.clear()
-            tasks.addAll(savedTasks)
+            tasks.addAll(taskList)
             taskAdapter.notifyDataSetChanged()
-        }
-        //edição ou adição de task
-        addEditTaskLauncher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
+        })
+
+        // Edição ou adição de task
+        addEditTaskLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val data = result.data
                 val task = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -75,13 +73,13 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
                 }
                 task?.let {
                     CoroutineScope(Dispatchers.Main).launch {
-                        val index = tasks.indexOfFirst { t -> t.id == it.id }
-                        if (index >= 0) {
-                            controller.updateTask(it)
+                        if (tasks.any { t -> t.id == it.id }) {
+                            controller.updateTask(it) // Atualiza tarefa no Firebase
+                            val index = tasks.indexOfFirst { t -> t.id == it.id }
                             tasks[index] = it
                             taskAdapter.notifyItemChanged(index)
                         } else {
-                            controller.insertTask(it)
+                            controller.insertTask(it) // Insere nova tarefa no Firebase
                             tasks.add(it)
                             taskAdapter.notifyItemInserted(tasks.size - 1)
                         }
@@ -90,12 +88,14 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
             }
         }
     }
-    //define o comportamento da criação do menu
+
+    // Define o comportamento da criação do menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
-    //define o comportamento do botão de criar uma task abrindo a tela do formulário de tasks
+
+    // Define o comportamento do botão de criar uma task
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_new_task -> {
@@ -103,10 +103,17 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
                 addEditTaskLauncher.launch(intent)
                 true
             }
+           // R.id.menu_deleted_tasks -> {
+                // Navega para a tela de tarefas excluídas
+             //   val intent = Intent(this, DeletedTasksActivity::class.java)
+               // startActivity(intent)
+                //true
+           // }
             else -> super.onOptionsItemSelected(item)
         }
     }
-//define o comportamento do clique longo em uma task: abrir o menu de contexto
+
+    // Define o comportamento do clique longo em uma task (menu de contexto)
     override fun onTaskLongClick(task: Task, view: View) {
         selectedTask = task
         view.showContextMenu()
@@ -114,40 +121,32 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
 
     override fun onDoneClickListener(task: Task, view: View) {
         selectedTask = task
-        if(task.completed ==true){
-            task.completed=false
+        task.completed = task.completed != true // Alterna o status da tarefa
+        CoroutineScope(Dispatchers.Main).launch {
+            controller.updateTask(task) // Atualiza o status no Firebase
         }
-        else{
-            task.completed=true
-        }
-       CoroutineScope(Dispatchers.Main).launch {
-           controller.updateTask(task)
-       }
     }
 
-    //define o comportamento da abertura do menu de contexto
+    // Define o comportamento da abertura do menu de contexto
     override fun onCreateContextMenu(
         menu: ContextMenu?,
         v: View?,
         menuInfo: ContextMenu.ContextMenuInfo?
     ) {
-        //infla o layout do menu de contexto
         super.onCreateContextMenu(menu, v, menuInfo)
         menuInflater.inflate(R.menu.task_menu_context, menu)
     }
-//método de deleção de task
+
+    // Método de deleção de task
     private fun deleteTask(task: Task) {
-        //cria co-rotina para executar em outra thread
         CoroutineScope(Dispatchers.Main).launch {
-            controller.deleteTask(task)
-            val index = tasks.indexOfFirst { it.id == task.id }
-            if (index >= 0) {
-                tasks.removeAt(index)
-                taskAdapter.notifyItemRemoved(index)
-            }
+            controller.deleteTask(task) // Deleta no Firebase
+            tasks.remove(task)
+            taskAdapter.notifyDataSetChanged()
         }
     }
-    //define o comportamento ao clicar em uma opção do menu de contexto
+
+    // Define o comportamento ao clicar em uma opção do menu de contexto
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.context_edit -> {
