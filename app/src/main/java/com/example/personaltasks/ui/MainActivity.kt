@@ -1,4 +1,4 @@
-package com.example.personaltasks
+package com.example.personaltasks.ui
 
 import android.content.Intent
 import android.os.Build
@@ -14,19 +14,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.example.personaltasks.Infrastructure.TasksDatabase
+import com.example.personaltasks.R
 import com.example.personaltasks.adapter.TaskAdapter
 import com.example.personaltasks.controller.PersonalTasksController
 import com.example.personaltasks.databinding.PersonalTasksBinding
-import com.example.personaltasks.databinding.TaskBinding
 import com.example.personaltasks.model.IOnTaskInteractionListener
 import com.example.personaltasks.model.Task
 import com.example.personaltasks.model.TaskFormMode
-import com.example.personaltasks.ui.TaskFormActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.UUID
 
 class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
 
