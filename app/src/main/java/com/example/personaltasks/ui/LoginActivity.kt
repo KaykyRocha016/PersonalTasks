@@ -9,41 +9,41 @@ import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityLoginBinding;
-    private val auth by lazy{
+    private val auth by lazy {
         FirebaseAuth.getInstance()
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        auth.currentUser?.let{
+        auth.currentUser?.let {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
         val btnLogin = viewBinding.btnLogin
-        btnLogin.setOnClickListener{
-            val email  =viewBinding.etEmail.text
+        btnLogin.setOnClickListener {
+            val email = viewBinding.etEmail.text
             val password = viewBinding.etPassword.text
-            if(email.isEmpty() || password.isEmpty()){
-                Toast.makeText(this,"email e senha obrigatórios!", Toast.LENGTH_SHORT).show()
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "email and password are required!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-            else{
-                auth.signInWithEmailAndPassword(email.toString().trim(),password.toString()).addOnCompleteListener(this){
-                    login->
-                    if(login.isSuccessful) {
+            auth.signInWithEmailAndPassword(email.toString().trim(), password.toString())
+                .addOnCompleteListener(this) { login ->
+                    if (login.isSuccessful) {
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
-                    }
-                    else{
-                        Toast.makeText(this, "tente novamente!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "incorrect password or email!", Toast.LENGTH_SHORT).show()
                     }
                 };
-            }
+
         }
         val btnSignUp = viewBinding.btnSignUp
-        btnSignUp.setOnClickListener{
-            startActivity(Intent(this,RegisterActivity::class.java))
+        btnSignUp.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
 
 
