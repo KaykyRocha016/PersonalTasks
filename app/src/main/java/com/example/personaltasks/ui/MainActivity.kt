@@ -103,12 +103,6 @@ class MainActivity : AppCompatActivity(), IOnTaskInteractionListener {
                 addEditTaskLauncher.launch(intent)
                 true
             }
-           // R.id.menu_deleted_tasks -> {
-                // Navega para a tela de tarefas excluídas
-             //   val intent = Intent(this, DeletedTasksActivity::class.java)
-               // startActivity(intent)
-                //true
-           // }
             else -> super.onOptionsItemSelected(item)
         }
     }
